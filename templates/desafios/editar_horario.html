@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Alterar Horários{% endblock %}
+
+{% block content %}
+{% include 'desafios/includes/header.html' %}
+
+<h2 style="text-align:center;">Alterar Descrição</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="text-align: center;">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+
+    {% if horarios_por_dia %}
+        {% for dia, horarios in horarios_por_dia %}
+            <h3 style="margin-top: 20px;">{{ dia }}</h3>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="padding: 8px; border: 1px solid #ccc;">Hora Início</th>
+                        <th style="padding: 8px; border: 1px solid #ccc;">Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for horario in horarios %}
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ccc;">{{ horario.hora_inicio }}</td>
+                            <td style="padding: 8px; border: 1px solid #ccc;">
+                                <input
+                                    type="text"
+                                    name="descricao_{{ horario.id }}"
+                                    value="{{ horario.descricao }}"
+                                    style="width: 100%; {% if campos_com_erro and horario.id in campos_com_erro %}border: 2px solid red;{% endif %}"
+                                >
+                                {% if campos_com_erro and horario.id in campos_com_erro %}
+                                    <small style="color: red;">A descrição não pode ser salva em branco.</small>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    {% else %}
+        <p style="text-align:center;">Nenhum horário cadastrado.</p>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button type="submit" style="background-color: rgb(250, 232, 67);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;">
+            Salvar Alterações
+        </button>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            const inputs = document.querySelectorAll("input[name^='descricao_']");
+        
+            // Adiciona listener para remover borda vermelha ao digitar
+            inputs.forEach(function(input) {
+                input.addEventListener("input", function() {
+                    input.style.border = ""; // remove a borda vermelha
+                });
+            });
+        
+            form.addEventListener("submit", function(event) {
+                let camposVazios = [];
+        
+                inputs.forEach(function(input) {
+                    if (input.value.trim() === "") {
+                        camposVazios.push(input);
+                    }
+                });
+        
+                if (camposVazios.length > 0) {
+                    alert("A descrição não pode ser salva em branco.");
+                    camposVazios.forEach(function(input) {
+                        input.style.border = "2px solid red";
+                    });
+                    event.preventDefault(); // Impede o envio
+                } else {
+                    if (!confirm("Deseja salvar as alterações?")) {
+                        event.preventDefault(); // Impede o envio se o usuário cancelar
+                    }
+                }
+            });
+        });
+        </script>
+        
+        
+</form>
+
+<div style="text-align: center; margin-top: 15px;">
+    <a href="{% url 'index' %}" class="btn btn-secondary">Voltar ao Planejamento</a>
+</div>
+
+{% endblock %}

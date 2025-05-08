@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Excluir Horários{% endblock %}
+
+{% block content %}
+{% include 'desafios/includes/header.html' %}
+
+<h2 style="text-align:center;">Excluir Horários</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="text-align: center;">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<form method="post">
+    {% csrf_token %}
+
+    {% if horarios_por_dia %}
+        {% for dia, horarios in horarios_por_dia %}
+            <h3 style="margin-top: 20px;">{{ dia }}</h3>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="padding: 8px; border: 1px solid #ccc;">Excluir</th>
+                        <th style="padding: 8px; border: 1px solid #ccc;">Hora Início</th>
+                        <th style="padding: 8px; border: 1px solid #ccc;">Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if horarios %}
+                        {% for horario in horarios %}
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ccc;">
+                                    <input type="checkbox" name="horarios" value="{{ horario.id }}">
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ccc;">{{ horario.hora_inicio }}</td>
+                                <td style="padding: 8px; border: 1px solid #ccc;">{{ horario.descricao }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" style="text-align:center;">Nenhum horário para {{ dia }}.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        {% endfor %}
+    {% else %}
+        <p style="text-align:center;">Nenhum horário cadastrado.</p>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button type="submit" onclick="return confirm('Tem certeza que deseja excluir os horários selecionados?');" style="background-color: rgb(250, 20, 43);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;">
+            Excluir Selecionados
+        </button>
+    </div>
+</form>
+<div style="text-align: center; margin-top: 15px;">
+    <a href="{% url 'index' %}" class="btn btn-secondary">Voltar ao Planejamento</a>
+</div>
+{% endblock %}

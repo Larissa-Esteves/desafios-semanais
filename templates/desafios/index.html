@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block title %}
+    Index
+{% endblock %}
+
+{% block content %}
+{% include './includes/header.html' %}
+
+<!-- Bloco para exibir mensagens -->
+{% if messages %}
+  <div style="margin: 20px 0;">
+    {% for message in messages %}
+      <div style="padding: 10px; margin-bottom: 10px; border-radius: 4px;
+                  {% if message.tags == 'success' %}
+                    background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+                  {% elif message.tags == 'error' %}
+                    background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+                  {% else %}
+                    background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;
+                  {% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+</br>
+
+<table style="border-collapse: collapse;
+        text-align: center;
+        width: 100%;
+        table-layout: fixed;">
+    <thead>
+        <tr>
+            <th style="padding: 10px; border: 1px solid #ccc;">Horário</th>
+            {% for dia_tuple in dias_da_semana %}
+                <th style="padding: 10px; border: 1px solid #ccc;">{{ dia_tuple.1 }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for hora in horarios %}
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ hora }}</td>
+                {% for dia_tuple in dias_da_semana %}
+                    {% with dia_abrev=dia_tuple.0|lower %}
+                        <td style="padding: 8px; border: 1px solid #ccc;">
+                            {% for horario_cadastrado in horarios_cadastrados %}
+                                {% if horario_cadastrado.dia|lower == dia_abrev and horario_cadastrado.hora_inicio == hora %}
+                                    {{ horario_cadastrado.descricao }}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% endwith %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!--
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'cadastrar_horario' %}">
+            <button type="button" style="background-color: #28a745; 
+                color: white; 
+                border: none; 
+                padding: 10px 20px; 
+                text-align: center; 
+                text-decoration: none; 
+                display: inline-block; 
+                font-size: 16px; 
+                margin: 4px 10px; 
+                cursor: pointer; 
+                border-radius: 5px;">
+                Cadastrar
+            </button>
+        </a>
+        
+        <a href="{% url 'lista_para_edicao' %}">
+            <button type="button" style="background-color: rgb(250, 232, 67);
+                color: black;
+                border: none;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 10px;
+                cursor: pointer;
+                border-radius: 5px;">
+                Alterar
+            </button>
+        </a>
+    
+        <a href="{% url 'lista_para_exclusao' %}">
+            <button type="button" style="background-color: rgb(250, 20, 43);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 10px;
+                cursor: pointer;
+                border-radius: 5px;">
+                Excluir
+            </button>
+        </a>
+    </div>
+    
+</form>-->
+
+{% include './includes/footer.html' %}
+{% endblock %}

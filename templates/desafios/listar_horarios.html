@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}
+    Excluir Descrição
+{% endblock %}
+
+{% block content %}
+{% include './includes/header.html' %}
+
+<h1>Exclua ou Altere os Dados</h1>
+
+<ul>
+    {% for horario in horarios %}
+        <li>
+            <strong>{{ horario.get_dia_display }} {{ horario.hora_inicio }}</strong>
+            {% if horario.descricao %}
+                - Descrição: {{ horario.descricao }}
+            {% else %}
+                - Nenhuma descrição cadastrada.
+            {% endif %}
+            <form method="post" action="{% url 'excluir_descricao' horario_id=horario.id %}">
+                {% csrf_token %}
+                <button type="button" style="
+                    background-color:rgb(250, 232, 67); 
+                    color: black; border: none; 
+                    padding: 10px 20px; 
+                    text-align: center; 
+                    text-decoration: none; 
+                    display: inline-block; 
+                    font-size: 16px; 
+                    margin: 4px 2px; 
+                    cursor: pointer; 
+                    border-radius: 5px;">Alterar</button>
+
+                <button type="button" style="
+                    background-color:rgb(250, 20, 43); 
+                    color: black; border: none; 
+                    padding: 10px 20px; 
+                    text-align: center; 
+                    text-decoration: none; 
+                    display: inline-block; 
+                    font-size: 16px; 
+                    margin: 4px 2px; 
+                    cursor: pointer; 
+                    border-radius: 5px;">Excluir</button>
+
+                    
+            </form>
+        </li>
+    {% empty %}
+        <li>Nenhum horário cadastrado ainda.</li>
+    {% endfor %}
+</ul>
+
+<p><a href="{% url 'index' %}">Voltar para a página principal</a></p>
+
+{% include './includes/footer.html' %}
+{% endblock %}
