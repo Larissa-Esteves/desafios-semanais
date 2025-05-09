@@ -7,6 +7,8 @@ from .forms import HorarioForm
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from collections import defaultdict
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 # Função para exibir a página principal com a tabela dia e horário
 def index(request):
@@ -159,7 +161,7 @@ def lista_para_exclusao(request):
     if request.method == 'POST':
         ids_para_excluir = request.POST.getlist('horarios')
         Horario.objects.filter(id__in=ids_para_excluir).delete()
-        messages.success(request, 'Horário(s) excluído(s) com sucesso.')
+        messages.success(request, 'Descrição excluída com sucesso.')
         return redirect('index')
 
     # Após possível exclusão, carrega novamente os dados atualizados
@@ -203,21 +205,31 @@ def lista_para_edicao(request):
     ordem_dias = [nome for _, nome in dias_da_semana]
     dias_ordenados = [(dia, horarios_por_dia[dia]) for dia in ordem_dias if dia in horarios_por_dia]
 
+    campos_com_erro = []
+
     if request.method == 'POST':
         erro = False
-        campos_com_erro = []
 
-        for horario in horarios_queryset:
-            descricao = request.POST.get(f"descricao_{horario.id}", '').strip()
+        # Obtem apenas o horário que foi alterado
+        horario_id = request.POST.get('horario_id')
+        descricao = request.POST.get('descricao', '').strip()
 
-            if not descricao:
+        if horario_id:
+            try:
+                horario = Horario.objects.get(id=horario_id)
+
+                if not descricao:
+                    erro = True
+                    campos_com_erro.append(horario.id)
+                    messages.error(request, f'A descrição para o horário das {horario.hora_inicio} está em branco.')
+                else:
+                    horario.descricao = descricao
+                    horario.save()
+                    messages.success(request, f'Descrição do horário {horario.hora_inicio} atualizada com sucesso!')
+
+            except Horario.DoesNotExist:
+                messages.error(request, 'Horário não encontrado.')
                 erro = True
-                campos_com_erro.append(horario.id)
-                messages.error(request, f'A descrição para o horário das {horario.hora_inicio} está em branco.')
-
-            else:
-                horario.descricao = descricao
-                horario.save()
 
         if erro:
             return render(request, 'desafios/editar_horario.html', {
@@ -225,10 +237,9 @@ def lista_para_edicao(request):
                 'campos_com_erro': campos_com_erro
             })
 
-        messages.success(request, 'Alterações salvas com sucesso!')
-        return redirect('index')
+        return redirect('index')  # Recarrega a própria página
 
     return render(request, 'desafios/editar_horario.html', {
         'horarios_por_dia': dias_ordenados,
-        'campos_com_erro': []  # Lista vazia no GET
+        'campos_com_erro': []
     })

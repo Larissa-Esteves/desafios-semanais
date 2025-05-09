@@ -14,4 +14,5 @@ urlpatterns = [
     path('excluir/<int:horario_id>/', views.excluir_horario, name='excluir_horario'),
     path('listar/', views.listar_horarios, name='listar_horarios'),
     path('alterar/', views.lista_para_edicao, name='lista_para_edicao'),# USO
+
 ]

@@ -11,9 +11,11 @@
 
     <style>
         body {
-            padding-top: 70px; /* espaço para a navbar fixa */
+            padding-top: 50px; /* espaço para a navbar fixa */
         }
+        
     </style>
+    
 </head>
 <body>
 
@@ -28,7 +30,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'index' %}">Planejamento</a>
+                        <!--<a class="nav-link" href="{% url 'index' %}">Planejamento</a>
+                        <button onclick="window.print()">Imprimir / Salvar como PDF</button>-->
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'cadastrar_horario' %}">Cadastrar</a>
