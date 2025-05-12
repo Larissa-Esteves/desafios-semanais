@@ -1,1 +1,1 @@
-This mini Django project displays a daily planner, where you can create, update, and delete information. Build your own Weekly Planner in Django using this base.
+Este miniprojeto Django exibe um planejador diário, onde você pode criar, atualizar e excluir informações. Crie seu próprio Planejador Semanal em Django usando esta base.
